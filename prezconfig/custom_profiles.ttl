@@ -19,12 +19,52 @@ prez:CustomIndexProfile a prof:Profile, prez:IndexProfile ;
   altr-ext:hasNodeShape
     [ a sh:NodeShape ; sh:targetClass atns:Entity ; altr-ext:hasDefaultProfile prez:AtnsEntityProfile ],
     [ a sh:NodeShape ; sh:targetClass odrl:Agreement ; altr-ext:hasDefaultProfile prez:OdrlAgreementProfile ],
+    [ a sh:NodeShape ; sh:targetClass rico:RecordSet ; altr-ext:hasDefaultProfile prez:RiCORecordSetProfile ],
     [ a sh:NodeShape ; sh:targetClass rico:Record ; altr-ext:hasDefaultProfile prez:RiCORecordProfile ] ;
   altr-ext:hasResourceFormat "application/json", "application/ld+json", "application/rdf+xml", "text/anot+turtle", "text/turtle" .
 
 prez:AtnsEntityProfile a prof:Profile, prez:ObjectProfile ; dcterms:identifier "atns-entity"^^xsd:token ; dcterms:title "ATNS Entity presentation profile"@en ; altr-ext:constrainsClass atns:Entity ; altr-ext:hasDefaultResourceFormat "text/anot+turtle" ; altr-ext:hasResourceFormat "application/anot+ld+json", "application/ld+json", "text/anot+turtle", "text/turtle" ; sh:property [ sh:path [ sh:union ( shext:allPredicateValues ( [ sh:inversePath atns:subjectEntity ] rdf:type ) ( [ sh:inversePath atns:subjectEntity ] atns:relationshipType ) ( [ sh:inversePath atns:subjectEntity ] atns:objectEntity ) ( [ sh:inversePath atns:objectEntity ] rdf:type ) ( [ sh:inversePath atns:objectEntity ] atns:relationshipType ) ( [ sh:inversePath atns:objectEntity ] atns:subjectEntity ) ) ] ] .
 
 prez:OdrlAgreementProfile a prof:Profile, prez:ObjectProfile ; dcterms:identifier "odrl-agreement"^^xsd:token ; dcterms:title "ODRL Agreement presentation profile"@en ; altr-ext:constrainsClass odrl:Agreement ; altr-ext:hasDefaultResourceFormat "text/anot+turtle" ; altr-ext:hasResourceFormat "application/anot+ld+json", "application/ld+json", "text/anot+turtle", "text/turtle" ; sh:property [ sh:path [ sh:union ( shext:allPredicateValues ( odrl:permission rdf:type ) ( odrl:permission dcterms:title ) ( odrl:permission schema:name ) ( odrl:permission schema:description ) ( odrl:permission odrl:action ) ( odrl:permission odrl:assigner ) ( odrl:permission odrl:assignee ) ( odrl:permission odrl:target ) ( odrl:permission odrl:target rdf:type ) ( odrl:permission odrl:target schema:name ) ( odrl:permission odrl:target schema:description ) ( odrl:permission odrl:target geo:hasGeometry ) ( odrl:permission odrl:target geo:hasGeometry geo:asWKT ) ) ] ] .
+
+prez:RiCORecordSetProfile
+    a prof:Profile, prez:ObjectProfile, sh:NodeShape ;
+    dcterms:identifier "rico-record-set"^^xsd:token ;
+    dcterms:title "RiC-O Record Set presentation profile"@en ;
+    dcterms:description "Presents a RiC-O Record Set using preferred schema.org fields and RiC-O archival detail."@en ;
+    altr-ext:constrainsClass rico:RecordSet ;
+    altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
+    altr-ext:hasResourceFormat
+        "application/anot+ld+json",
+        "application/ld+json",
+        "application/rdf+xml",
+        "text/anot+turtle",
+        "text/turtle" ;
+    sh:property [
+        sh:path [
+            sh:union (
+                rdf:type
+                dcterms:contributor
+                dcterms:creator
+                schema:additionalType
+                schema:conditionsOfAccess
+                schema:creator
+                schema:dateCreated
+                schema:dateModified
+                schema:description
+                schema:identifier
+                schema:inLanguage
+                schema:location
+                schema:materialExtent
+                schema:name
+                schema:publisher
+                schema:usageInfo
+                rico:hasContentType
+                rico:hasDocumentaryFormType
+                ( rico:isAssociatedWithDate rico:expressedDate )
+            )
+        ]
+    ] .
 
 prez:RiCORecordProfile
     a prof:Profile, prez:ObjectProfile, sh:NodeShape ;
