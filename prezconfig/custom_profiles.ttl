@@ -53,7 +53,6 @@ prez:RiCORecordProfile
                 schema:description
                 schema:identifier
                 schema:inLanguage
-                schema:isPartOf
                 schema:location
                 schema:materialExtent
                 schema:name
