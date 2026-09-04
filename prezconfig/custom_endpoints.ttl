@@ -13,7 +13,13 @@ ex:collections-object a ont:DynamicEndpoint, ont:ObjectEndpoint ; rdfs:label "Co
 ex:items-listing a ont:DynamicEndpoint, ont:ListingEndpoint ; rdfs:label "Items Listing" ; ont:apiPath "/catalogs/{catalogId}/collections/{collectionId}/items" ; ont:relevantShapes ex:item-shape .
 ex:items-object a ont:DynamicEndpoint, ont:ObjectEndpoint ; rdfs:label "Item Object" ; ont:apiPath "/catalogs/{catalogId}/collections/{collectionId}/items/{itemId}" ; ont:relevantShapes ex:item-shape .
 
-ex:catalog-shape a sh:NodeShape ; sh:targetClass schema:DataCatalog ; ont:hierarchyLevel 1 .
+ex:catalog-shape a sh:NodeShape ;
+  sh:targetClass schema:DataCatalog ;
+  sh:property [
+    sh:class schema:Dataset ;
+    sh:path schema:hasPart
+  ] ;
+  ont:hierarchyLevel 1 .
 # Both registered hierarchies type their level-2 resources as schema:Dataset;
 # Briscoe Smith additionally types them rico:RecordSet. The common class avoids
 # duplicate rows for resources carrying both types.
