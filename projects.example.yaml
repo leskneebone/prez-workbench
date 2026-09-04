@@ -13,9 +13,18 @@ projects:
 
   - id: briscoesmith
     rdf:
-      - /Users/your-name/Projects/IDN/briscoesmith/outputs
+      # Use the aggregate output, not the whole outputs directory: that directory
+      # also contains the component files merged into this catalogue. Loading both
+      # copies would duplicate blank nodes such as RiC-O date ranges.
+      - /Users/your-name/Projects/IDN/briscoesmith/outputs/briscoesmith-catalogue.ttl
     vocabs:
       - /Users/your-name/Projects/IDN/briscoesmith/vocabs
     data:
       - /Users/your-name/Projects/IDN/briscoesmith/annotations
 
+  # Register shared controlled vocabularies explicitly when source data uses
+  # their concepts. Loading the vocabulary supplies labels for those concepts;
+  # Prez annotation files are intended for ontology terms and predicates.
+  - id: common-vocabs
+    vocabs:
+      - /Users/your-name/Projects/IDN/reference-resource-register/vocabs/sync/data-access-rights.ttl

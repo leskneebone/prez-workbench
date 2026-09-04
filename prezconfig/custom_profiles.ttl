@@ -26,6 +26,55 @@ prez:AtnsEntityProfile a prof:Profile, prez:ObjectProfile ; dcterms:identifier "
 
 prez:OdrlAgreementProfile a prof:Profile, prez:ObjectProfile ; dcterms:identifier "odrl-agreement"^^xsd:token ; dcterms:title "ODRL Agreement presentation profile"@en ; altr-ext:constrainsClass odrl:Agreement ; altr-ext:hasDefaultResourceFormat "text/anot+turtle" ; altr-ext:hasResourceFormat "application/anot+ld+json", "application/ld+json", "text/anot+turtle", "text/turtle" ; sh:property [ sh:path [ sh:union ( shext:allPredicateValues ( odrl:permission rdf:type ) ( odrl:permission dcterms:title ) ( odrl:permission schema:name ) ( odrl:permission schema:description ) ( odrl:permission odrl:action ) ( odrl:permission odrl:assigner ) ( odrl:permission odrl:assignee ) ( odrl:permission odrl:target ) ( odrl:permission odrl:target rdf:type ) ( odrl:permission odrl:target schema:name ) ( odrl:permission odrl:target schema:description ) ( odrl:permission odrl:target geo:hasGeometry ) ( odrl:permission odrl:target geo:hasGeometry geo:asWKT ) ) ] ] .
 
-_:ricoInstantiationPath sh:alternativePath ( rico:hasOrHadInstantiation rico:hasOrHadAnalogueInstantiation rico:hasOrHadDigitalInstantiation rico:hasOrHadDerivedInstantiation ) .
-prez:RiCORecordProfile a prof:Profile, prez:ObjectProfile, sh:NodeShape ; dcterms:identifier "rico-record"^^xsd:token ; dcterms:title "RiC-O Record presentation profile"@en ; altr-ext:constrainsClass rico:Record ; altr-ext:hasDefaultResourceFormat "text/anot+turtle" ; altr-ext:hasResourceFormat "application/anot+ld+json", "application/ld+json", "application/rdf+xml", "text/anot+turtle", "text/turtle" ; sh:property [ sh:path [ sh:union ( [ shext:bNodeDepth "2" ] shext:allPredicateValues _:ricoInstantiationPath ( _:ricoInstantiationPath rdf:type ) ( _:ricoInstantiationPath schema:name ) ( _:ricoInstantiationPath schema:description ) ( _:ricoInstantiationPath schema:identifier ) ( _:ricoInstantiationPath schema:location ) ( _:ricoInstantiationPath schema:materialExtent ) ( _:ricoInstantiationPath schema:dateCreated ) ( _:ricoInstantiationPath schema:dateModified ) ( _:ricoInstantiationPath rico:name ) ( _:ricoInstantiationPath rico:identifier ) ( _:ricoInstantiationPath rico:instantiationExtent ) ( _:ricoInstantiationPath rico:hasCollector ) ( _:ricoInstantiationPath rico:conditionsOfAccess ) ( _:ricoInstantiationPath rico:isAssociatedWithDate ) ( _:ricoInstantiationPath rico:isAssociatedWithDate rdf:type ) ( _:ricoInstantiationPath rico:isAssociatedWithDate rico:expressedDate ) ( _:ricoInstantiationPath rico:isAssociatedWithDate rico:beginningDate ) ( _:ricoInstantiationPath rico:isAssociatedWithDate rico:endDate ) ( _:ricoInstantiationPath rico:isAssociatedWithDate rico:dateQualifier ) ( _:ricoInstantiationPath rico:isAssociatedWithDate rico:normalizedDateValue ) ) ] ] .
-
+prez:RiCORecordProfile
+    a prof:Profile, prez:ObjectProfile, sh:NodeShape ;
+    dcterms:identifier "rico-record"^^xsd:token ;
+    dcterms:title "RiC-O Record presentation profile"@en ;
+    dcterms:description "Presents a RiC-O Record using preferred schema.org fields, one generic instantiation relationship, and expressed dates."@en ;
+    altr-ext:constrainsClass rico:Record ;
+    altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
+    altr-ext:hasResourceFormat
+        "application/anot+ld+json",
+        "application/ld+json",
+        "application/rdf+xml",
+        "text/anot+turtle",
+        "text/turtle" ;
+    sh:property [
+        sh:path [
+            sh:union (
+                rdf:type
+                dcterms:contributor
+                dcterms:creator
+                schema:additionalType
+                schema:conditionsOfAccess
+                schema:creator
+                schema:dateCreated
+                schema:dateModified
+                schema:description
+                schema:identifier
+                schema:inLanguage
+                schema:isPartOf
+                schema:location
+                schema:materialExtent
+                schema:name
+                schema:publisher
+                schema:usageInfo
+                rico:hasContentType
+                rico:hasDocumentaryFormType
+                rico:hasOrHadInstantiation
+                ( rico:hasOrHadInstantiation rdf:type )
+                ( rico:hasOrHadInstantiation schema:name )
+                ( rico:hasOrHadInstantiation schema:description )
+                ( rico:hasOrHadInstantiation schema:identifier )
+                ( rico:hasOrHadInstantiation schema:location )
+                ( rico:hasOrHadInstantiation schema:materialExtent )
+                ( rico:hasOrHadInstantiation schema:dateCreated )
+                ( rico:hasOrHadInstantiation schema:dateModified )
+                ( rico:hasOrHadInstantiation rico:instantiationExtent )
+                ( rico:hasOrHadInstantiation rico:hasCollector )
+                ( rico:hasOrHadInstantiation rico:isAssociatedWithDate rico:expressedDate )
+                ( rico:isAssociatedWithDate rico:expressedDate )
+                rico:isOrWasIncludedIn
+            )
+        ]
+    ] .
