@@ -1,0 +1,16 @@
+version: '3'
+tasks:
+  up:
+    desc: Start the packaged Prez API and PrezUI
+    cmds:
+      - docker compose up -d --build
+      - echo 'Open http://localhost:3000/catalogs'
+  down:
+    desc: Stop the workbench
+    cmds: [docker compose down]
+  logs:
+    desc: Follow API and UI logs
+    cmds: [docker compose logs -f --tail=100]
+  status:
+    desc: Show container status
+    cmds: [docker compose ps]

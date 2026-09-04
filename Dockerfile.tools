@@ -1,0 +1,3 @@
+FROM ghcr.io/rdflib/prez:4.23.7
+WORKDIR /workbench
+ENTRYPOINT ["python", "scripts/workbench.py"]

@@ -1,0 +1,7 @@
+projects.local.yaml
+.staging/
+dist/
+.env
+__pycache__/
+*.pyc
+

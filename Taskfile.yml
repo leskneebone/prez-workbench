@@ -1,0 +1,55 @@
+version: '3'
+
+vars:
+  TOOL_IMAGE: prez-workbench-tools:local
+
+tasks:
+  setup:
+    desc: Check prerequisites, create local config if needed, and build the helper image
+    cmds:
+      - docker version >/dev/null
+      - docker compose version >/dev/null
+      - sh -c 'test -f projects.local.yaml || { cp projects.example.yaml projects.local.yaml; echo "Created projects.local.yaml; edit its absolute paths, then run task assemble."; }'
+      - docker build -q -t {{.TOOL_IMAGE}} -f Dockerfile.tools .
+
+  assemble:
+    desc: Copy explicitly registered RDF into the private staging area
+    deps: [setup]
+    cmds:
+      - docker run --rm -v "{{.TASKFILE_DIR}}:/workbench" -v "$HOME/Projects:$HOME/Projects:ro" -w /workbench {{.TOOL_IMAGE}} assemble
+
+  validate:
+    desc: Parse all staged RDF and report duplicate subjects
+    deps: [setup]
+    cmds:
+      - docker run --rm -v "{{.TASKFILE_DIR}}:/workbench" -v "$HOME/Projects:$HOME/Projects:ro" -w /workbench {{.TOOL_IMAGE}} validate
+
+  up:
+    desc: Validate staged RDF, then start Prez API and PrezUI
+    cmds:
+      - task: validate
+      - docker compose up -d --build
+      - echo 'PrezUI http://localhost:3000/catalogs  |  Prez API http://localhost:8000/catalogs'
+
+  down:
+    desc: Stop and remove workbench containers (staged data is retained)
+    cmds:
+      - docker compose down
+
+  logs:
+    desc: Follow API and UI logs
+    cmds:
+      - docker compose logs -f --tail=100
+
+  status:
+    desc: Show container status and HTTP health
+    cmds:
+      - docker compose ps
+      - sh -c 'curl -fsS http://localhost:${PREZ_PORT:-8000}/health && echo || true'
+
+  export:
+    desc: Assemble, validate, and create a portable Docker-only client bundle
+    cmds:
+      - task: assemble
+      - task: validate
+      - docker run --rm -v "{{.TASKFILE_DIR}}:/workbench" -v "$HOME/Projects:$HOME/Projects:ro" -w /workbench {{.TOOL_IMAGE}} export

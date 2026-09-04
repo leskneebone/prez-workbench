@@ -1,0 +1,21 @@
+# Copy this file to projects.local.yaml and replace these example paths.
+# Only paths explicitly listed here are staged. Parent directories are never crawled.
+projects:
+  - id: atns
+    rdf:
+      - /Users/your-name/Projects/IDN/atns-preservation/build/sandbox/rdf
+    vocabs:
+      - /Users/your-name/Projects/IDN/atns-preservation/vocabs
+    model:
+      - /Users/your-name/Projects/IDN/atns-preservation/model.ttl
+    data:
+      - /Users/your-name/Projects/IDN/atns-preservation/prezdata
+
+  - id: briscoesmith
+    rdf:
+      - /Users/your-name/Projects/IDN/briscoesmith/outputs
+    vocabs:
+      - /Users/your-name/Projects/IDN/briscoesmith/vocabs
+    data:
+      - /Users/your-name/Projects/IDN/briscoesmith/annotations
+

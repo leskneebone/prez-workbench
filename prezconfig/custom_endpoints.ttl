@@ -1,0 +1,27 @@
+@prefix atns: <https://linked.data.gov.au/def/atns/model/> .
+@prefix ex: <https://example.org/prez-workbench/> .
+@prefix ont: <https://prez.dev/ont/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rico: <https://www.ica.org/standards/RiC/ontology#> .
+@prefix schema: <https://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+ex:catalogs-listing a ont:DynamicEndpoint, ont:ListingEndpoint ; rdfs:label "Catalogs Listing" ; ont:apiPath "/catalogs" ; ont:relevantShapes ex:catalog-shape .
+ex:catalogs-object a ont:DynamicEndpoint, ont:ObjectEndpoint ; rdfs:label "Catalog Object" ; ont:apiPath "/catalogs/{catalogId}" ; ont:relevantShapes ex:catalog-shape .
+ex:collections-listing a ont:DynamicEndpoint, ont:ListingEndpoint ; rdfs:label "Collections Listing" ; ont:apiPath "/catalogs/{catalogId}/collections" ; ont:relevantShapes ex:collection-shape .
+ex:collections-object a ont:DynamicEndpoint, ont:ObjectEndpoint ; rdfs:label "Collection Object" ; ont:apiPath "/catalogs/{catalogId}/collections/{collectionId}" ; ont:relevantShapes ex:collection-shape .
+ex:items-listing a ont:DynamicEndpoint, ont:ListingEndpoint ; rdfs:label "Items Listing" ; ont:apiPath "/catalogs/{catalogId}/collections/{collectionId}/items" ; ont:relevantShapes ex:item-shape .
+ex:items-object a ont:DynamicEndpoint, ont:ObjectEndpoint ; rdfs:label "Item Object" ; ont:apiPath "/catalogs/{catalogId}/collections/{collectionId}/items/{itemId}" ; ont:relevantShapes ex:item-shape .
+
+ex:catalog-shape a sh:NodeShape ; sh:targetClass schema:DataCatalog ; ont:hierarchyLevel 1 .
+# Both registered hierarchies type their level-2 resources as schema:Dataset;
+# Briscoe Smith additionally types them rico:RecordSet. The common class avoids
+# duplicate rows for resources carrying both types.
+ex:collection-shape a sh:NodeShape ; sh:targetClass schema:Dataset ; ont:hierarchyLevel 2 ; sh:property [ sh:class schema:DataCatalog ; sh:path [ sh:inversePath schema:hasPart ] ] .
+# Briscoe Smith records retain their RiC-O membership and also publish the
+# schema:isPartOf bridge used here. That shared predicate lets one route shape
+# navigate both models without concatenating competing endpoint definitions.
+ex:item-shape a sh:NodeShape ; sh:targetClass atns:Entity, rico:Record ; ont:hierarchyLevel 3 ;
+  sh:property
+    [ sh:class schema:DataCatalog ; sh:path ( schema:isPartOf [ sh:inversePath schema:hasPart ] ) ],
+    [ sh:path schema:isPartOf ] .

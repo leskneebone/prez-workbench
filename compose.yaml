@@ -1,0 +1,36 @@
+name: prez-workbench
+services:
+  prez:
+    image: ghcr.io/rdflib/prez:4.23.7
+    ports:
+      - "${PREZ_PORT:-8000}:8000"
+    volumes:
+      - ./.staging/rdf:/rdf/outputs:ro
+      - ./.staging/vocabs:/rdf/vocabs:ro
+      - ./.staging/model:/rdf/model:ro
+      - ./.staging/data:/rdf/prezdata:ro
+      - ./prezconfig/custom_endpoints.ttl:/app/reference_data/endpoints/data_endpoints_custom/custom_endpoints.ttl:ro
+      - ./prezconfig/custom_profiles.ttl:/app/reference_data/profiles/custom_profiles.ttl:ro
+    environment:
+      CUSTOM_ENDPOINTS: "true"
+      SPARQL_REPO_TYPE: pyoxigraph_memory
+      PYOXIGRAPH_DATA_DIR: /rdf
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  ui:
+    build:
+      context: ./ui
+      args:
+        NUXT_PUBLIC_PREZ_API_ENDPOINT: http://localhost:${PREZ_PORT:-8000}
+        NUXT_PUBLIC_PREZ_AUTO_DETECT_HTML: "true"
+        NUXT_PUBLIC_PREZ_AUTO_DETECT_MARKDOWN: "true"
+    depends_on:
+      prez:
+        condition: service_healthy
+    ports:
+      - "${PREZ_UI_PORT:-3000}:80"
