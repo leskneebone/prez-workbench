@@ -18,6 +18,8 @@ RUN pnpm add -D prez-ui \
   --allow-build=vue-demi
 RUN pnpm install
 RUN npm --platform=linux --arch=x64 --libc=musl rebuild sharp
+COPY components/ItemTable.vue app/components/ItemTable.vue
+COPY components/RiCOInstantiationDetails.vue app/components/RiCOInstantiationDetails.vue
 ENV NUXT_PUBLIC_PREZ_API_ENDPOINT=$NUXT_PUBLIC_PREZ_API_ENDPOINT \
     NUXT_PUBLIC_PREZ_AUTO_DETECT_HTML=$NUXT_PUBLIC_PREZ_AUTO_DETECT_HTML \
     NUXT_PUBLIC_PREZ_AUTO_DETECT_MARKDOWN=$NUXT_PUBLIC_PREZ_AUTO_DETECT_MARKDOWN
@@ -28,4 +30,3 @@ COPY --from=build /app/prez-ui/.output/public /usr/share/nginx/html
 COPY default.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
-
