@@ -29,7 +29,7 @@ tasks:
     cmds:
       - task: validate
       - docker compose up -d --build
-      - echo 'PrezUI http://localhost:3000/catalogs  |  Prez API http://localhost:8000/catalogs'
+      - sh -c 'echo "PrezUI http://localhost:${PREZ_UI_PORT:-3000}/catalogs  |  Prez API http://localhost:${PREZ_PORT:-8000}/catalogs"'
 
   down:
     desc: Stop and remove workbench containers (staged data is retained)
