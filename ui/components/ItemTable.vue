@@ -11,7 +11,7 @@ const responseNodes = ref<any[]>([]);
 
 onMounted(async () => {
     const response = await fetch(apiEndpoint + getPageUrl(), {
-        headers: { Accept: "application/ld+json" },
+        headers: { Accept: "application/anot+ld+json" },
     });
     if (response.ok) responseNodes.value = await response.json();
 });
