@@ -59,7 +59,7 @@ prez:RiCORecordSetProfile
                 schema:name
                 schema:publisher
                 schema:usageInfo
-                rico:hasContentType
+                rico:hasContentOfType
                 rico:hasDocumentaryFormType
                 ( rico:isAssociatedWithDate rico:expressedDate )
             )
@@ -98,7 +98,7 @@ prez:RiCORecordProfile
                 schema:name
                 schema:publisher
                 schema:usageInfo
-                rico:hasContentType
+                rico:hasContentOfType
                 rico:hasDocumentaryFormType
                 rico:hasOrHadInstantiation
                 ( rico:hasOrHadInstantiation rdf:type )
