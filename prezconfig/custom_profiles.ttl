@@ -42,6 +42,7 @@ prez:AtnsDatasetProfile
         sh:path [
             sh:union (
                 rdf:type
+                dcterms:source
                 owl:imports
                 schema:citation
                 schema:conditionsOfAccess
@@ -52,7 +53,6 @@ prez:AtnsDatasetProfile
                 schema:license
                 schema:name
                 schema:publisher
-                schema:url
             )
         ]
     ] .

@@ -53,11 +53,22 @@ const instantiationPredicates = new Set([
     "https://www.ica.org/standards/RiC/ontology#hasOrHadDerivedInstantiation",
 ]);
 
+const atnsDatasetIri = "https://data.idnau.org/pid/resource/d23405b4-fc04-47e2-9e7a-9c5735ae3780";
+const dctermsSource = "http://purl.org/dc/terms/source";
+const hiddenAtnsSourceNote = "ATNS_XML_05Apr22 export; public, non-deleted records with usable display labels.";
+
 const filteredProperties = computed(() => {
     if (!term?.properties) return [];
     return Object.entries(term.properties)
         .filter(([key]) => !hiddenPredicates.has(key) && !instantiationPredicates.has(key))
-        .map(([, value]) => value)
+        .map(([key, value]: [string, any]) => {
+            if (term.value !== atnsDatasetIri || key !== dctermsSource) return value;
+            return {
+                ...value,
+                objects: value.objects.filter((object: any) => object.value !== hiddenAtnsSourceNote),
+            };
+        })
+        .filter((value) => value.objects.length)
         .sort((a, b) => {
             if (descriptionPredicates.has(a.predicate.value)) return -1;
             if (descriptionPredicates.has(b.predicate.value)) return 1;
