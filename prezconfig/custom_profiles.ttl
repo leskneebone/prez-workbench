@@ -85,7 +85,6 @@ prez:RiCORecordProfile
                 rdf:type
                 dcterms:contributor
                 dcterms:creator
-                schema:additionalType
                 schema:conditionsOfAccess
                 schema:creator
                 schema:dateCreated
