@@ -38,6 +38,7 @@ const hiddenPredicates = new Set([
     "http://www.w3.org/2004/02/skos/core#prefLabel",
     "http://purl.org/dc/terms/title",
     "http://www.w3.org/2000/01/rdf-schema#label",
+    "https://linked.data.gov.au/def/atns/model/deleted",
 ]);
 
 const descriptionPredicates = new Set([
@@ -53,6 +54,8 @@ const instantiationPredicates = new Set([
     "https://www.ica.org/standards/RiC/ontology#hasOrHadDerivedInstantiation",
 ]);
 
+const referencePredicate = "http://purl.org/dc/terms/references";
+
 const atnsDatasetIri = "https://data.idnau.org/pid/resource/d23405b4-fc04-47e2-9e7a-9c5735ae3780";
 const dctermsSource = "http://purl.org/dc/terms/source";
 const hiddenAtnsSourceNote = "ATNS_XML_05Apr22 export; public, non-deleted records with usable display labels.";
@@ -60,7 +63,7 @@ const hiddenAtnsSourceNote = "ATNS_XML_05Apr22 export; public, non-deleted recor
 const filteredProperties = computed(() => {
     if (!term?.properties) return [];
     return Object.entries(term.properties)
-        .filter(([key]) => !hiddenPredicates.has(key) && !instantiationPredicates.has(key))
+        .filter(([key]) => !hiddenPredicates.has(key) && !instantiationPredicates.has(key) && key !== referencePredicate)
         .map(([key, value]: [string, any]) => {
             if (term.value !== atnsDatasetIri || key !== dctermsSource) return value;
             return {
@@ -84,6 +87,13 @@ const instantiations = computed(() => {
         if (!instantiationPredicates.has(predicate)) continue;
         for (const object of property.objects) unique.set(object.value, object);
     }
+    return [...unique.values()];
+});
+
+const references = computed(() => {
+    if (!term?.properties) return [];
+    const unique = new Map<string, any>();
+    for (const object of term.properties[referencePredicate]?.objects || []) unique.set(object.value, object);
     return [...unique.values()];
 });
 </script>
@@ -117,6 +127,21 @@ const instantiations = computed(() => {
                 :nodes-by-id="responseNodesById"
                 :render-html="props.renderHtml"
                 :render-markdown="props.renderMarkdown"
+            />
+        </div>
+    </section>
+
+    <section v-if="references.length" class="mt-8" aria-labelledby="atns-references-heading">
+        <h2 id="atns-references-heading" class="mb-3 text-xl font-semibold">
+            {{ references.length === 1 ? "Reference" : "References" }}
+        </h2>
+        <div class="flex flex-col gap-4">
+            <ATNSReferenceDetails
+                v-for="reference in references"
+                :key="reference.value"
+                :term="reference"
+                :data-node="responseNodesById[reference.value]"
+                :nodes-by-id="responseNodesById"
             />
         </div>
     </section>
