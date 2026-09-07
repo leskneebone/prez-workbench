@@ -8,7 +8,7 @@ from rdflib import Graph, URIRef
 ROOT = Path(__file__).resolve().parents[1]
 STAGE = ROOT / ".staging"
 RDF_EXTENSIONS = {".ttl", ".trig", ".nt", ".nq", ".rdf", ".xml", ".jsonld"}
-CATEGORIES = ("rdf", "vocabs", "model", "data")
+CATEGORIES = ("rdf", "vocabs", "model", "data", "annotations")
 
 def files_at(path):
     if path.is_file():
@@ -64,7 +64,10 @@ def assemble():
                 if not found: raise SystemExit(f"No recognised RDF files at configured path: {src}")
                 for f in found:
                     rel = f.name if src.is_file() else f.relative_to(src)
-                    dest = Path(category) / pid / rel
+                    # Prez annotations are reference data rather than repository
+                    # data. Stage them flat so the complete directory can be
+                    # mounted over the image's custom annotation input directory.
+                    dest = Path(category) / rel if category == "annotations" else Path(category) / pid / rel
                     names[f.name].append((pid, str(f), str(dest)))
                     out = tmp / dest
                     out.parent.mkdir(parents=True, exist_ok=True)

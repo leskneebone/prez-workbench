@@ -9,6 +9,7 @@ services:
       - ./.staging/vocabs:/rdf/vocabs:ro
       - ./.staging/model:/rdf/model:ro
       - ./.staging/data:/rdf/prezdata:ro
+      - ./.staging/annotations:/app/reference_data/annotations:ro
       - ./prezconfig/custom_endpoints.ttl:/app/reference_data/endpoints/data_endpoints_custom/custom_endpoints.ttl:ro
       - ./prezconfig/custom_profiles.ttl:/app/reference_data/profiles/custom_profiles.ttl:ro
     environment:

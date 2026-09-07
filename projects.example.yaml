@@ -19,7 +19,7 @@ projects:
       - /Users/your-name/Projects/IDN/briscoesmith/outputs/briscoesmith-catalogue.ttl
     vocabs:
       - /Users/your-name/Projects/IDN/briscoesmith/vocabs
-    data:
+    annotations:
       - /Users/your-name/Projects/IDN/briscoesmith/annotations
 
   # Register shared controlled vocabularies explicitly when source data uses

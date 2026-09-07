@@ -26,7 +26,7 @@ An **image** is a packaged application template. A **container** is a running in
 
 ## Registration and safeguards
 
-Copy `projects.example.yaml` to `projects.local.yaml` (normally done by `task setup`) and use absolute paths. Accepted keys are `rdf`, `vocabs`, `model`, and `data`. Directories are searched recursively only after being explicitly registered. Only recognised RDF extensions are copied; private XML, databases, documents, and other raw inputs are ignored.
+Copy `projects.example.yaml` to `projects.local.yaml` (normally done by `task setup`) and use absolute paths. Accepted keys are `rdf`, `vocabs`, `model`, `data`, and `annotations`. Use `annotations` for Prez ontology-term annotation files so they are loaded as reference data rather than ordinary repository data. Directories are searched recursively only after being explicitly registered. Only recognised RDF extensions are copied; private XML, databases, documents, and other raw inputs are ignored.
 
 Assembly fails for missing paths, empty registered locations, repeated project IDs, invalid IDs, and duplicate basenames. `.staging/manifest.json` records every source path, SHA-256 hash, project, category, and destination. Validation checks hashes, parses every RDF file, and writes `.staging/duplicate-subjects.json`, distinguishing graph-identical shared descriptions from subjects whose statements differ across projects.
 
