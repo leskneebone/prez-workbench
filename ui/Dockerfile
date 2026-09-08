@@ -20,6 +20,7 @@ RUN pnpm install
 RUN npm --platform=linux --arch=x64 --libc=musl rebuild sharp
 COPY components/ItemTable.vue app/components/ItemTable.vue
 COPY components/ATNSReferenceDetails.vue app/components/ATNSReferenceDetails.vue
+COPY components/ODRLAgreementDetails.vue app/components/ODRLAgreementDetails.vue
 COPY components/RiCOInstantiationDetails.vue app/components/RiCOInstantiationDetails.vue
 ENV NUXT_PUBLIC_PREZ_API_ENDPOINT=$NUXT_PUBLIC_PREZ_API_ENDPOINT \
     NUXT_PUBLIC_PREZ_AUTO_DETECT_HTML=$NUXT_PUBLIC_PREZ_AUTO_DETECT_HTML \

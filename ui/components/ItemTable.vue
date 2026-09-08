@@ -55,6 +55,7 @@ const instantiationPredicates = new Set([
 ]);
 
 const referencePredicate = "http://purl.org/dc/terms/references";
+const relationPredicate = "http://purl.org/dc/terms/relation";
 
 const atnsDatasetIri = "https://data.idnau.org/pid/resource/d23405b4-fc04-47e2-9e7a-9c5735ae3780";
 const dctermsSource = "http://purl.org/dc/terms/source";
@@ -63,7 +64,7 @@ const hiddenAtnsSourceNote = "ATNS_XML_05Apr22 export; public, non-deleted recor
 const filteredProperties = computed(() => {
     if (!term?.properties) return [];
     return Object.entries(term.properties)
-        .filter(([key]) => !hiddenPredicates.has(key) && !instantiationPredicates.has(key) && key !== referencePredicate)
+        .filter(([key]) => !hiddenPredicates.has(key) && !instantiationPredicates.has(key) && key !== referencePredicate && key !== relationPredicate)
         .map(([key, value]: [string, any]) => {
             if (term.value !== atnsDatasetIri || key !== dctermsSource) return value;
             return {
@@ -94,6 +95,13 @@ const references = computed(() => {
     if (!term?.properties) return [];
     const unique = new Map<string, any>();
     for (const object of term.properties[referencePredicate]?.objects || []) unique.set(object.value, object);
+    return [...unique.values()];
+});
+
+const relatedAgreements = computed(() => {
+    if (!term?.properties) return [];
+    const unique = new Map<string, any>();
+    for (const object of term.properties[relationPredicate]?.objects || []) unique.set(object.value, object);
     return [...unique.values()];
 });
 </script>
@@ -141,6 +149,19 @@ const references = computed(() => {
                 :key="reference.value"
                 :term="reference"
                 :data-node="responseNodesById[reference.value]"
+                :nodes-by-id="responseNodesById"
+            />
+        </div>
+    </section>
+
+    <section v-if="relatedAgreements.length" class="mt-8" aria-labelledby="odrl-agreements-heading">
+        <h2 id="odrl-agreements-heading" class="mb-3 text-xl font-semibold">ODRL Agreement enrichment</h2>
+        <div class="flex flex-col gap-4">
+            <ODRLAgreementDetails
+                v-for="agreement in relatedAgreements"
+                :key="agreement.value"
+                :term="agreement"
+                :data-node="responseNodesById[agreement.value]"
                 :nodes-by-id="responseNodesById"
             />
         </div>
