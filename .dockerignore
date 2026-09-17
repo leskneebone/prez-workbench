@@ -1,0 +1,7 @@
+.git
+.staging
+.staging.next
+dist
+projects.local.yaml
+__pycache__
+*.pyc

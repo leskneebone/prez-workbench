@@ -19,7 +19,7 @@ def files_at(path):
 def load_config():
     path = ROOT / "projects.local.yaml"
     if not path.exists():
-        raise SystemExit("Missing projects.local.yaml. Run 'task setup', edit its absolute paths, then retry.")
+        raise SystemExit("Missing projects.local.yaml. Run 'task setup', edit its paths, then retry.")
     # Deliberately parse the small documented YAML subset ourselves so the helper
     # can reuse the Prez image without adding a host or container dependency.
     projects, current, category = [], None, None
@@ -76,8 +76,8 @@ def assemble():
         ids.add(pid)
         for category in CATEGORIES:
             for raw in project.get(category, []) or []:
-                src = Path(raw)
-                if not src.is_absolute(): raise SystemExit(f"Configured path must be absolute: {raw}")
+                src = Path(raw).expanduser()
+                if not src.is_absolute(): src = (ROOT / src).resolve()
                 if not src.exists(): raise SystemExit(f"Configured path does not exist: {src}")
                 found = files_at(src)
                 if not found: raise SystemExit(f"No recognised RDF files at configured path: {src}")
@@ -158,6 +158,13 @@ def export_bundle():
         dest = bundle / dest_name
         if src.is_dir(): shutil.copytree(src, dest)
         else: dest.parent.mkdir(parents=True, exist_ok=True); shutil.copy2(src, dest)
+    # Keep full source paths in the local manifest for troubleshooting, but do
+    # not disclose the exporting user's directory layout in a client bundle.
+    portable_manifest = bundle / ".staging" / "manifest.json"
+    manifest_data = json.loads(portable_manifest.read_text())
+    for item in manifest_data["files"]:
+        item["source"] = Path(item["source"]).name
+    portable_manifest.write_text(json.dumps(manifest_data, indent=2) + "\n")
     archive = dist / "prez-workbench-client.tar.gz"
     if archive.exists(): archive.unlink()
     with tarfile.open(archive, "w:gz") as tar: tar.add(bundle, arcname=bundle.name)

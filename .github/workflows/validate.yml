@@ -1,0 +1,20 @@
+name: Validate workbench
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: go-task/setup-task@v1
+      - name: Configure bundled sample
+        run: cp projects.example.yaml projects.local.yaml
+      - name: Assemble and validate RDF
+        run: |
+          task assemble
+          task validate
+      - name: Build service images
+        run: docker compose build

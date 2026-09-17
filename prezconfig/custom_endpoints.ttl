@@ -19,13 +19,12 @@ ex:catalog-shape a sh:NodeShape ;
     sh:path schema:hasPart
   ] ;
   ont:hierarchyLevel 1 .
-# ATNS collections remain schema:Dataset; Briscoe Smith archival series are
-# IDN-CP CreativeWorks specialised as rico:RecordSet.
+# Collections may be schema:Dataset resources or archival rico:RecordSet
+# resources used by the included project examples.
 ex:collection-shape a sh:NodeShape ; sh:targetClass schema:Dataset, rico:RecordSet ; ont:hierarchyLevel 2 ; sh:property [ sh:class schema:DataCatalog ; sh:path [ sh:inversePath schema:hasPart ] ] .
-# Briscoe Smith records retain their RiC-O membership and also publish the
-# schema:isPartOf bridge used here. That shared predicate lets one route shape
-# navigate both models without concatenating competing endpoint definitions.
-ex:item-shape a sh:NodeShape ; sh:targetClass atns:Entity, rico:Record ; ont:hierarchyLevel 3 ;
+# The schema:isPartOf bridge lets one route shape navigate generic CreativeWork,
+# ATNS and RiC-O examples without competing endpoint definitions.
+ex:item-shape a sh:NodeShape ; sh:targetClass schema:CreativeWork, atns:Entity, rico:Record ; ont:hierarchyLevel 3 ;
   sh:property
     [ sh:class schema:DataCatalog ; sh:path ( schema:isPartOf [ sh:inversePath schema:hasPart ] ) ],
     [ sh:path schema:isPartOf ] .

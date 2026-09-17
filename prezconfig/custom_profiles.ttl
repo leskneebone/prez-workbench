@@ -15,26 +15,26 @@ PREFIX shext: <http://example.com/shacl-extension#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
-# Local workbench mirror of the canonical deployed ATNS profiles in the
-# idn-prez4 repository's prez-profiles.trig. Make deployment changes there
-# first, then resynchronise these definitions for workbench testing.
+# The workbench includes project-oriented profiles used during IDN catalogue
+# development. They are examples and local test configuration, not a claim that
+# these profiles are part of Prez itself.
 prez:CustomIndexProfile a prof:Profile, prez:IndexProfile ;
   dcterms:identifier "workbench"^^xsd:token ; dcterms:title "Prez Workbench Index Profile"@en ;
-  dcterms:description "Selects ATNS, ODRL and RiC-O presentation profiles while retaining Prez defaults."@en ;
+  dcterms:description "Selects dataset, ATNS, ODRL and RiC-O presentation profiles while retaining Prez defaults."@en ;
   altr-ext:constrainsClass prez:CatPrez ; altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
   altr-ext:hasNodeShape
-    [ a sh:NodeShape ; sh:targetClass schema:Dataset ; altr-ext:hasDefaultProfile prez:AtnsDatasetProfile ],
+    [ a sh:NodeShape ; sh:targetClass schema:Dataset ; altr-ext:hasDefaultProfile prez:DatasetProfile ],
     [ a sh:NodeShape ; sh:targetClass atns:Entity ; altr-ext:hasDefaultProfile prez:AtnsEntityProfile ],
     [ a sh:NodeShape ; sh:targetClass odrl:Agreement ; altr-ext:hasDefaultProfile prez:OdrlAgreementProfile ],
     [ a sh:NodeShape ; sh:targetClass rico:RecordSet ; altr-ext:hasDefaultProfile prez:RiCORecordSetProfile ],
     [ a sh:NodeShape ; sh:targetClass rico:Record ; altr-ext:hasDefaultProfile prez:RiCORecordProfile ] ;
   altr-ext:hasResourceFormat "application/json", "application/ld+json", "application/rdf+xml", "text/anot+turtle", "text/turtle" .
 
-prez:AtnsDatasetProfile
+prez:DatasetProfile
     a prof:Profile, prez:ObjectProfile, sh:NodeShape ;
-    dcterms:identifier "atns-dataset"^^xsd:token ;
-    dcterms:title "ATNS Dataset presentation profile"@en ;
-    dcterms:description "Presents ATNS dataset metadata while retaining provenance source statements in the underlying RDF."@en ;
+    dcterms:identifier "dataset"^^xsd:token ;
+    dcterms:title "Dataset presentation profile"@en ;
+    dcterms:description "Presents common dataset metadata while retaining provenance statements in the underlying RDF."@en ;
     altr-ext:constrainsClass schema:Dataset ;
     altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
     altr-ext:hasResourceFormat

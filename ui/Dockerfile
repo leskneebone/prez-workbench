@@ -6,9 +6,10 @@ ARG NUXT_PUBLIC_PREZ_AUTO_DETECT_MARKDOWN=true
 WORKDIR /app
 ENV PNPM_HOME="/pnpm" PATH="$PNPM_HOME:$PATH"
 RUN npm install -g corepack && corepack enable
-RUN pnpm dlx create-prez-app@latest prez-ui
+ARG PREZ_UI_VERSION=4.3.3
+RUN pnpm dlx create-prez-app@${PREZ_UI_VERSION} prez-ui
 WORKDIR /app/prez-ui
-RUN pnpm add -D prez-ui \
+RUN pnpm add -D prez-ui@${PREZ_UI_VERSION} \
   --allow-build='@fortawesome/fontawesome-common-types' \
   --allow-build='@fortawesome/free-solid-svg-icons' \
   --allow-build=esbuild \

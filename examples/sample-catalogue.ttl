@@ -1,0 +1,23 @@
+PREFIX schema: <https://schema.org/>
+
+<https://example.org/catalogue>
+    a schema:DataCatalog ;
+    schema:description "A small self-contained catalogue supplied with Prez Workbench."@en ;
+    schema:hasPart <https://example.org/dataset> ;
+    schema:name "Prez Workbench sample catalogue"@en ;
+.
+
+<https://example.org/dataset>
+    a schema:Dataset ;
+    schema:description "A sample collection used to verify a new local installation."@en ;
+    schema:hasPart <https://example.org/item> ;
+    schema:isPartOf <https://example.org/catalogue> ;
+    schema:name "Sample collection"@en ;
+.
+
+<https://example.org/item>
+    a schema:CreativeWork ;
+    schema:description "If you can read this item in PrezUI, the workbench is running correctly."@en ;
+    schema:isPartOf <https://example.org/dataset> ;
+    schema:name "Hello from Prez Workbench"@en ;
+.

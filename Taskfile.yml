@@ -9,7 +9,7 @@ tasks:
     cmds:
       - docker version >/dev/null
       - docker compose version >/dev/null
-      - sh -c 'test -f projects.local.yaml || { cp projects.example.yaml projects.local.yaml; echo "Created projects.local.yaml; edit its absolute paths, then run task assemble."; }'
+      - sh -c 'test -f projects.local.yaml || { cp projects.example.yaml projects.local.yaml; echo "Created projects.local.yaml; edit its paths when you are ready to load other RDF."; }'
       - docker build -q -t {{.TOOL_IMAGE}} -f Dockerfile.tools .
 
   assemble:

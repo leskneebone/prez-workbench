@@ -1,41 +1,28 @@
-# Copy this file to projects.local.yaml and replace these example paths.
-# Only paths explicitly listed here are staged. Parent directories are never crawled.
+# task setup copies this file to projects.local.yaml. The bundled sample works
+# immediately. Replace or extend it with paths to your own RDF when ready.
+# Relative paths resolve from the workbench directory. External sources should
+# be under ~/Projects, which is mounted read-only into the helper container.
+# Only explicitly listed locations are staged.
 projects:
-  - id: atns
+  - id: sample
     rdf:
-      - /Users/your-name/Projects/IDN/atns-preservation/build/sandbox/rdf
-    vocabs:
-      - /Users/your-name/Projects/IDN/atns-preservation/vocabs
-    model:
-      - /Users/your-name/Projects/IDN/atns-preservation/model.ttl
-    data:
-      - /Users/your-name/Projects/IDN/atns-preservation/prezdata
+      - examples/sample-catalogue.ttl
 
-  - id: briscoesmith
-    rdf:
-      # Use the aggregate output, not the whole outputs directory: that directory
-      # also contains the component files merged into this catalogue. Loading both
-      # copies would duplicate blank nodes such as RiC-O date ranges.
-      - /Users/your-name/Projects/IDN/briscoesmith/outputs/briscoesmith-catalogue.ttl
-    vocabs:
-      - /Users/your-name/Projects/IDN/briscoesmith/vocabs
-    annotations:
-      - /Users/your-name/Projects/IDN/briscoesmith/annotations
-
-  # Register shared controlled vocabularies explicitly when source data uses
-  # their concepts. Loading the vocabulary supplies labels for those concepts;
-  # Prez annotation files are intended for ontology terms and predicates.
-  - id: common-vocabs
-    vocabs:
-      - /Users/your-name/Projects/IDN/reference-resource-register/vocabs/sync/data-access-rights.ttl
-
-  # ATNS schema:spatialCoverage links point to NNTT ILUA features. Loading these
-  # named graphs as a flattened staging copy allows local Prez to traverse and
-  # render their authoritative geometry without changing the source files.
-  - id: nntt-ilua-features
-    flattened:
-      - /Users/your-name/Projects/IDN/reference-resource-register/datasets/features/nntt-ilua-part1.trig
-      - /Users/your-name/Projects/IDN/reference-resource-register/datasets/features/nntt-ilua-part2.trig
-      - /Users/your-name/Projects/IDN/reference-resource-register/datasets/features/nntt-ilua-part3.trig
-    rdf:
-      - /Users/your-name/Projects/IDN/reference-resource-register/datasets/metadata/nntt-metadata.ttl
+# Example external project:
+#  - id: my-project
+#    rdf:
+#      - ~/Projects/my-project/outputs
+#    vocabs:
+#      - ~/Projects/my-project/vocabs
+#    model:
+#      - ~/Projects/my-project/model.ttl
+#    data:
+#      - ~/Projects/my-project/prezdata
+#    annotations:
+#      - ~/Projects/my-project/annotations
+#
+# Use flattened only when named graphs in TriG or N-Quads must be presented to
+# local Prez as one default graph. Sources are never modified.
+#  - id: named-graph-example
+#    flattened:
+#      - ~/Projects/my-project/features.trig
