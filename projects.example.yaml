@@ -28,3 +28,14 @@ projects:
   - id: common-vocabs
     vocabs:
       - /Users/your-name/Projects/IDN/reference-resource-register/vocabs/sync/data-access-rights.ttl
+
+  # ATNS schema:spatialCoverage links point to NNTT ILUA features. Loading these
+  # named graphs as a flattened staging copy allows local Prez to traverse and
+  # render their authoritative geometry without changing the source files.
+  - id: nntt-ilua-features
+    flattened:
+      - /Users/your-name/Projects/IDN/reference-resource-register/datasets/features/nntt-ilua-part1.trig
+      - /Users/your-name/Projects/IDN/reference-resource-register/datasets/features/nntt-ilua-part2.trig
+      - /Users/your-name/Projects/IDN/reference-resource-register/datasets/features/nntt-ilua-part3.trig
+    rdf:
+      - /Users/your-name/Projects/IDN/reference-resource-register/datasets/metadata/nntt-metadata.ttl

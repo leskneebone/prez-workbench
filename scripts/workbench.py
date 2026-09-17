@@ -3,12 +3,13 @@ import hashlib, json, os, shutil, sys, tarfile
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
-from rdflib import Graph, URIRef
+from rdflib import Dataset, Graph, Literal, URIRef
 
 ROOT = Path(__file__).resolve().parents[1]
 STAGE = ROOT / ".staging"
 RDF_EXTENSIONS = {".ttl", ".trig", ".nt", ".nq", ".rdf", ".xml", ".jsonld"}
-CATEGORIES = ("rdf", "vocabs", "model", "data", "annotations")
+CATEGORIES = ("rdf", "vocabs", "model", "data", "annotations", "flattened")
+GEO_WKT_LITERAL = URIRef("http://www.opengis.net/ont/geosparql#wktLiteral")
 
 def files_at(path):
     if path.is_file():
@@ -43,6 +44,24 @@ def load_config():
         raise SystemExit("projects.local.yaml must contain a non-empty 'projects' list.")
     return projects
 
+def flatten_rdf(source, destination):
+    formats = {".ttl":"turtle", ".trig":"trig", ".nt":"nt", ".nq":"nquads", ".rdf":"xml", ".xml":"xml", ".jsonld":"json-ld"}
+    dataset = Dataset()
+    dataset.parse(source, format=formats.get(source.suffix.lower()))
+    graph = Graph()
+    omitted_oversized_wkt = 0
+    for subject, predicate, obj, _ in dataset.quads((None, None, None, None)):
+        # Oxigraph has a 16 MiB RDF token limit. A very small number of source
+        # polygons exceed that limit as individual WKT literals. Omit only
+        # those literals from the disposable staging copy; the source remains
+        # untouched and the UI reports that their geometry is unavailable.
+        if isinstance(obj, Literal) and obj.datatype == GEO_WKT_LITERAL and len(str(obj).encode()) >= 16_000_000:
+            omitted_oversized_wkt += 1
+            continue
+        graph.add((subject, predicate, obj))
+    graph.serialize(destination, format="turtle")
+    return omitted_oversized_wkt
+
 def assemble():
     projects = load_config()
     tmp = ROOT / ".staging.next"
@@ -64,16 +83,21 @@ def assemble():
                 if not found: raise SystemExit(f"No recognised RDF files at configured path: {src}")
                 for f in found:
                     rel = f.name if src.is_file() else f.relative_to(src)
+                    if category == "flattened": rel = Path(rel).with_suffix(".ttl")
                     # Prez annotations are reference data rather than repository
                     # data. Stage them flat so the complete directory can be
                     # mounted over the image's custom annotation input directory.
-                    dest = Path(category) / rel if category == "annotations" else Path(category) / pid / rel
+                    staged_category = "rdf" if category == "flattened" else category
+                    dest = Path(staged_category) / rel if category == "annotations" else Path(staged_category) / pid / rel
                     names[f.name].append((pid, str(f), str(dest)))
                     out = tmp / dest
                     out.parent.mkdir(parents=True, exist_ok=True)
-                    shutil.copy2(f, out)
+                    omitted_oversized_wkt = flatten_rdf(f, out) if category == "flattened" else 0
+                    if category != "flattened": shutil.copy2(f, out)
                     digest = hashlib.sha256(out.read_bytes()).hexdigest()
-                    manifest.append({"project": pid, "category": category, "source": str(f), "sha256": digest, "staged": str(dest)})
+                    manifest_item = {"project": pid, "category": category, "source": str(f), "sha256": digest, "staged": str(dest)}
+                    if omitted_oversized_wkt: manifest_item["omitted_oversized_wkt"] = omitted_oversized_wkt
+                    manifest.append(manifest_item)
     collisions = {n: rows for n, rows in names.items() if len(rows) > 1}
     if collisions:
         shutil.rmtree(tmp)

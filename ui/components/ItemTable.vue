@@ -56,6 +56,11 @@ const instantiationPredicates = new Set([
 
 const referencePredicate = "http://purl.org/dc/terms/references";
 const relationPredicate = "http://purl.org/dc/terms/relation";
+const spatialCoveragePredicate = "https://schema.org/spatialCoverage";
+const schemaDescriptionPredicate = "https://schema.org/description";
+const bodyTextPredicate = "https://schema.org/text";
+const atnsEntityClass = "https://linked.data.gov.au/def/atns/model/Entity";
+const geoFeatureClass = "http://www.opengis.net/ont/geosparql#Feature";
 
 const atnsDatasetIri = "https://data.idnau.org/pid/resource/d23405b4-fc04-47e2-9e7a-9c5735ae3780";
 const dctermsSource = "http://purl.org/dc/terms/source";
@@ -64,7 +69,8 @@ const hiddenAtnsSourceNote = "ATNS_XML_05Apr22 export; public, non-deleted recor
 const filteredProperties = computed(() => {
     if (!term?.properties) return [];
     return Object.entries(term.properties)
-        .filter(([key]) => !hiddenPredicates.has(key) && !instantiationPredicates.has(key) && key !== referencePredicate && key !== relationPredicate)
+        .filter(([key]) => !hiddenPredicates.has(key) && !instantiationPredicates.has(key) && key !== referencePredicate && key !== relationPredicate && key !== spatialCoveragePredicate)
+        .filter(([key]) => key !== bodyTextPredicate && key !== schemaDescriptionPredicate)
         .map(([key, value]: [string, any]) => {
             if (term.value !== atnsDatasetIri || key !== dctermsSource) return value;
             return {
@@ -80,6 +86,14 @@ const filteredProperties = computed(() => {
                 .localeCompare(b.predicate.label?.value || b.predicate.value);
         });
 });
+
+const schemaDescriptions = computed(() => term?.properties?.[schemaDescriptionPredicate]?.objects || []);
+const bodyTexts = computed(() => term?.properties?.[bodyTextPredicate]?.objects || []);
+const isAtnsEntity = computed(() => term?.rdfTypes?.some((type: any) => type.value === atnsEntityClass));
+const isGeoFeature = computed(() => term?.rdfTypes?.some((type: any) => type.value === geoFeatureClass));
+const spatialCoverages = computed(() => isAtnsEntity.value
+    ? term?.properties?.[spatialCoveragePredicate]?.objects || []
+    : []);
 
 const instantiations = computed(() => {
     if (!term?.properties) return [];
@@ -107,7 +121,47 @@ const relatedAgreements = computed(() => {
 </script>
 
 <template>
-    <Table v-if="term?.properties && filteredProperties.length" class="item-table">
+    <section v-if="schemaDescriptions.length" aria-labelledby="schema-description-heading">
+        <h2 id="schema-description-heading" class="mb-3 text-xl font-semibold">Description</h2>
+        <div class="rounded-md border bg-white p-5">
+            <p
+                v-for="description in schemaDescriptions"
+                :key="description.value"
+                class="whitespace-pre-wrap break-words leading-relaxed [overflow-wrap:anywhere]"
+            >{{ description.value }}</p>
+        </div>
+    </section>
+
+    <details v-if="bodyTexts.length" class="mt-6 rounded-md border bg-white">
+        <summary class="cursor-pointer select-none px-5 py-4 text-xl font-semibold">Body text</summary>
+        <div class="border-t px-5 py-4">
+            <p
+                v-for="bodyText in bodyTexts"
+                :key="bodyText.value"
+                class="whitespace-pre-wrap break-words leading-relaxed [overflow-wrap:anywhere]"
+            >{{ bodyText.value }}</p>
+        </div>
+    </details>
+
+    <ATNSSpatialCoverageDetails
+        v-for="feature in spatialCoverages"
+        :key="feature.value"
+        :term="feature"
+        :data-node="responseNodesById[feature.value]"
+        :nodes-by-id="responseNodesById"
+    />
+
+    <ATNSSpatialCoverageDetails
+        v-if="isGeoFeature"
+        :term="term"
+        :data-node="responseNodesById[term.value]"
+        :nodes-by-id="responseNodesById"
+        heading="Map"
+        open-by-default
+        :show-detail-link="false"
+    />
+
+    <Table v-if="filteredProperties.length" class="item-table mt-6">
         <TableBody role="rowgroup">
             <ItemTableRow
                 v-for="(fieldProp, index) in filteredProperties"

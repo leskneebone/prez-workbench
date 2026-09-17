@@ -15,6 +15,9 @@ PREFIX shext: <http://example.com/shacl-extension#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
+# Local workbench mirror of the canonical deployed ATNS profiles in the
+# idn-prez4 repository's prez-profiles.trig. Make deployment changes there
+# first, then resynchronise these definitions for workbench testing.
 prez:CustomIndexProfile a prof:Profile, prez:IndexProfile ;
   dcterms:identifier "workbench"^^xsd:token ; dcterms:title "Prez Workbench Index Profile"@en ;
   dcterms:description "Selects ATNS, ODRL and RiC-O presentation profiles while retaining Prez defaults."@en ;
@@ -63,34 +66,21 @@ prez:AtnsEntityProfile
     a prof:Profile, prez:ObjectProfile, sh:NodeShape ;
     dcterms:identifier "atns-entity"^^xsd:token ;
     dcterms:title "ATNS Entity presentation profile"@en ;
-    dcterms:description "Presents an ATNS entity with embedded reference metadata and preserved incoming and outgoing relationship rows, while omitting source deletion flags."@en ;
+    dcterms:description "Presents an ATNS entity with embedded reference metadata, preserved incoming and outgoing relationship rows, and spatial feature details for an on-demand map, while omitting source deletion flags."@en ;
     altr-ext:constrainsClass atns:Entity ;
     altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
     altr-ext:hasResourceFormat "application/anot+ld+json", "application/ld+json", "text/anot+turtle", "text/turtle" ;
     sh:property [
         sh:path [
             sh:union (
-                rdf:type
-                dcterms:relation
-                dcterms:references
-                atns:category
-                atns:country
-                atns:eid
-                atns:sourceEntityId
-                atns:subcategory
-                schema:additionalType
-                schema:conditionsOfAccess
-                schema:description
-                schema:endDate
-                schema:isPartOf
-                schema:keywords
-                schema:location
-                schema:name
-                schema:spatialCoverage
-                schema:startDate
-                schema:url
+                shext:allPredicateValues
+                ( schema:spatialCoverage rdf:type )
                 ( schema:spatialCoverage schema:name )
-                prov:qualifiedAttribution
+                ( schema:spatialCoverage schema:description )
+                ( schema:spatialCoverage geo:hasGeometry )
+                ( schema:spatialCoverage geo:hasGeometry geo:asWKT )
+                ( schema:spatialCoverage geo:hasBoundingBox )
+                ( schema:spatialCoverage geo:hasBoundingBox geo:asWKT )
                 ( prov:qualifiedAttribution rdf:type )
                 ( prov:qualifiedAttribution schema:agent )
                 ( prov:qualifiedAttribution schema:roleName )
@@ -132,9 +122,44 @@ prez:AtnsEntityProfile
                 ( [ sh:inversePath atns:objectEntity ] atns:subjectEntity )
             )
         ]
+    ],
+    [
+        sh:maxCount 0 ;
+        sh:path atns:deleted ;
     ] .
 
-prez:OdrlAgreementProfile a prof:Profile, prez:ObjectProfile ; dcterms:identifier "odrl-agreement"^^xsd:token ; dcterms:title "ODRL Agreement presentation profile"@en ; altr-ext:constrainsClass odrl:Agreement ; altr-ext:hasDefaultResourceFormat "text/anot+turtle" ; altr-ext:hasResourceFormat "application/anot+ld+json", "application/ld+json", "text/anot+turtle", "text/turtle" ; sh:property [ sh:path [ sh:union ( shext:allPredicateValues ( odrl:permission rdf:type ) ( odrl:permission dcterms:title ) ( odrl:permission schema:name ) ( odrl:permission schema:description ) ( odrl:permission odrl:action ) ( odrl:permission odrl:assigner ) ( odrl:permission odrl:assignee ) ( odrl:permission odrl:target ) ( odrl:permission odrl:target rdf:type ) ( odrl:permission odrl:target schema:name ) ( odrl:permission odrl:target schema:description ) ( odrl:permission odrl:target geo:hasGeometry ) ( odrl:permission odrl:target geo:hasGeometry geo:asWKT ) ) ] ] .
+prez:OdrlAgreementProfile
+    a prof:Profile, prez:ObjectProfile, sh:NodeShape ;
+    dcterms:identifier "odrl-agreement"^^xsd:token ;
+    dcterms:title "ODRL Agreement presentation profile"@en ;
+    dcterms:description "Presents an ODRL Agreement with its named Permission rules, actions, parties, targets and available target geometry."@en ;
+    altr-ext:constrainsClass odrl:Agreement ;
+    altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
+    altr-ext:hasResourceFormat
+        "application/anot+ld+json",
+        "application/ld+json",
+        "text/anot+turtle",
+        "text/turtle" ;
+    sh:property [
+        sh:path [
+            sh:union (
+                shext:allPredicateValues
+                ( odrl:permission rdf:type )
+                ( odrl:permission dcterms:title )
+                ( odrl:permission schema:name )
+                ( odrl:permission schema:description )
+                ( odrl:permission odrl:action )
+                ( odrl:permission odrl:assigner )
+                ( odrl:permission odrl:assignee )
+                ( odrl:permission odrl:target )
+                ( odrl:permission odrl:target rdf:type )
+                ( odrl:permission odrl:target schema:name )
+                ( odrl:permission odrl:target schema:description )
+                ( odrl:permission odrl:target geo:hasGeometry )
+                ( odrl:permission odrl:target geo:hasGeometry geo:asWKT )
+            )
+        ]
+    ] .
 
 prez:RiCORecordSetProfile
     a prof:Profile, prez:ObjectProfile, sh:NodeShape ;
