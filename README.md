@@ -4,6 +4,14 @@ Prez Workbench is an experimental, Docker-based environment for assembling, vali
 
 The workbench combines an explicitly registered set of RDF files into one local Prez API and one PrezUI. It never scans a parent projects directory: only paths listed in the ignored `projects.local.yaml` are copied into the ignored `.staging/` area. Source files are mounted read-only and are never modified.
 
+## Why does this exist?
+
+You can do all of this with Prez and PrezUI directly. If you're comfortable setting up and configuring their development environments, you probably don't need Prez Workbench.
+
+This project is for the rest of us: people who work with RDF, vocabularies, ontologies and linked data, but don't necessarily want to become Prez or frontend developers just to see their data running locally in PrezUI. It packages one opinionated, reproducible route through the setup: point it at some RDF, let it assemble and validate the data, start the containers, and open the result in a browser.
+
+Prez Workbench is not part of Prez or PrezUI, and it isn't an alternative implementation of either. It's a convenience layer built on top of them — a shortcut to a local workbench when the thing you actually want to work on is the data.
+
 ## Quick start
 
 Install [Docker Desktop](https://docs.docker.com/desktop/) and [Task](https://taskfile.dev/docs/installation/), then run:
