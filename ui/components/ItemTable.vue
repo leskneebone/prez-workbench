@@ -59,7 +59,9 @@ const relationPredicate = "http://purl.org/dc/terms/relation";
 const spatialCoveragePredicate = "https://schema.org/spatialCoverage";
 const schemaDescriptionPredicate = "https://schema.org/description";
 const bodyTextPredicate = "https://schema.org/text";
+const odrlObligationPredicate = "http://www.w3.org/ns/odrl/2/obligation";
 const atnsEntityClass = "https://linked.data.gov.au/def/atns/model/Entity";
+const odrlAgreementClass = "http://www.w3.org/ns/odrl/2/Agreement";
 const geoFeatureClass = "http://www.opengis.net/ont/geosparql#Feature";
 
 const atnsDatasetIri = "https://data.idnau.org/pid/resource/d23405b4-fc04-47e2-9e7a-9c5735ae3780";
@@ -70,7 +72,7 @@ const filteredProperties = computed(() => {
     if (!term?.properties) return [];
     return Object.entries(term.properties)
         .filter(([key]) => !hiddenPredicates.has(key) && !instantiationPredicates.has(key) && key !== referencePredicate && key !== relationPredicate && key !== spatialCoveragePredicate)
-        .filter(([key]) => key !== bodyTextPredicate && key !== schemaDescriptionPredicate)
+        .filter(([key]) => key !== bodyTextPredicate && key !== schemaDescriptionPredicate && key !== odrlObligationPredicate)
         .map(([key, value]: [string, any]) => {
             if (term.value !== atnsDatasetIri || key !== dctermsSource) return value;
             return {
@@ -90,6 +92,7 @@ const filteredProperties = computed(() => {
 const schemaDescriptions = computed(() => term?.properties?.[schemaDescriptionPredicate]?.objects || []);
 const bodyTexts = computed(() => term?.properties?.[bodyTextPredicate]?.objects || []);
 const isAtnsEntity = computed(() => term?.rdfTypes?.some((type: any) => type.value === atnsEntityClass));
+const isOdrlAgreement = computed(() => term?.rdfTypes?.some((type: any) => type.value === odrlAgreementClass));
 const isGeoFeature = computed(() => term?.rdfTypes?.some((type: any) => type.value === geoFeatureClass));
 const spatialCoverages = computed(() => isAtnsEntity.value
     ? term?.properties?.[spatialCoveragePredicate]?.objects || []
@@ -116,6 +119,13 @@ const relatedAgreements = computed(() => {
     if (!term?.properties) return [];
     const unique = new Map<string, any>();
     for (const object of term.properties[relationPredicate]?.objects || []) unique.set(object.value, object);
+    return [...unique.values()];
+});
+
+const displayedAgreements = computed(() => {
+    const unique = new Map<string, any>();
+    if (isOdrlAgreement.value) unique.set(term.value, term);
+    for (const agreement of relatedAgreements.value) unique.set(agreement.value, agreement);
     return [...unique.values()];
 });
 </script>
@@ -208,15 +218,16 @@ const relatedAgreements = computed(() => {
         </div>
     </section>
 
-    <section v-if="relatedAgreements.length" class="mt-8" aria-labelledby="odrl-agreements-heading">
+    <section v-if="displayedAgreements.length" class="mt-8" aria-labelledby="odrl-agreements-heading">
         <h2 id="odrl-agreements-heading" class="mb-3 text-xl font-semibold">ODRL Agreement enrichment</h2>
         <div class="flex flex-col gap-4">
             <ODRLAgreementDetails
-                v-for="agreement in relatedAgreements"
+                v-for="agreement in displayedAgreements"
                 :key="agreement.value"
                 :term="agreement"
                 :data-node="responseNodesById[agreement.value]"
                 :nodes-by-id="responseNodesById"
+                :show-description="agreement.value !== term.value"
             />
         </div>
     </section>

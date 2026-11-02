@@ -24,8 +24,8 @@ prez:CustomIndexProfile a prof:Profile, prez:IndexProfile ;
   altr-ext:constrainsClass prez:CatPrez ; altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
   altr-ext:hasNodeShape
     [ a sh:NodeShape ; sh:targetClass schema:Dataset ; altr-ext:hasDefaultProfile prez:DatasetProfile ],
-    [ a sh:NodeShape ; sh:targetClass atns:Entity ; altr-ext:hasDefaultProfile prez:AtnsEntityProfile ],
     [ a sh:NodeShape ; sh:targetClass odrl:Agreement ; altr-ext:hasDefaultProfile prez:OdrlAgreementProfile ],
+    [ a sh:NodeShape ; sh:targetClass atns:Entity ; altr-ext:hasDefaultProfile prez:AtnsEntityProfile ],
     [ a sh:NodeShape ; sh:targetClass rico:RecordSet ; altr-ext:hasDefaultProfile prez:RiCORecordSetProfile ],
     [ a sh:NodeShape ; sh:targetClass rico:Record ; altr-ext:hasDefaultProfile prez:RiCORecordProfile ] ;
   altr-ext:hasResourceFormat "application/json", "application/ld+json", "application/rdf+xml", "text/anot+turtle", "text/turtle" .
@@ -66,7 +66,7 @@ prez:AtnsEntityProfile
     a prof:Profile, prez:ObjectProfile, sh:NodeShape ;
     dcterms:identifier "atns-entity"^^xsd:token ;
     dcterms:title "ATNS Entity presentation profile"@en ;
-    dcterms:description "Presents an ATNS entity with embedded reference metadata, preserved incoming and outgoing relationship rows, and spatial feature details for an on-demand map, while omitting source deletion flags."@en ;
+    dcterms:description "Presents an ATNS entity with embedded reference metadata, spatial feature details and, when present on the same resource, reviewed ODRL Agreement obligations and targets, while omitting source deletion flags."@en ;
     altr-ext:constrainsClass atns:Entity ;
     altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
     altr-ext:hasResourceFormat "application/anot+ld+json", "application/ld+json", "text/anot+turtle", "text/turtle" ;
@@ -81,45 +81,26 @@ prez:AtnsEntityProfile
                 ( schema:spatialCoverage geo:hasGeometry geo:asWKT )
                 ( schema:spatialCoverage geo:hasBoundingBox )
                 ( schema:spatialCoverage geo:hasBoundingBox geo:asWKT )
-                ( prov:qualifiedAttribution rdf:type )
-                ( prov:qualifiedAttribution schema:agent )
-                ( prov:qualifiedAttribution schema:roleName )
-                ( prov:qualifiedAttribution schema:agent rdf:type )
-                ( prov:qualifiedAttribution schema:agent schema:additionalType )
-                ( prov:qualifiedAttribution schema:agent schema:alternateName )
-                ( prov:qualifiedAttribution schema:agent schema:identifier )
-                ( prov:qualifiedAttribution schema:agent schema:memberOf )
-                ( prov:qualifiedAttribution schema:agent schema:name )
-                ( prov:qualifiedAttribution schema:agent schema:url )
-                ( prov:qualifiedAttribution schema:agent skos:historyNote )
-                ( dcterms:relation rdf:type )
-                ( dcterms:relation dcterms:created )
-                ( dcterms:relation odrl:permission )
-                ( dcterms:relation odrl:uid )
-                ( dcterms:relation schema:description )
-                ( dcterms:relation schema:name )
-                ( dcterms:relation odrl:permission rdf:type )
-                ( dcterms:relation odrl:permission odrl:action )
-                ( dcterms:relation odrl:permission odrl:assignee )
-                ( dcterms:relation odrl:permission odrl:assigner )
-                ( dcterms:relation odrl:permission odrl:target )
-                ( dcterms:relation odrl:permission schema:description )
-                ( dcterms:relation odrl:permission schema:name )
-                ( dcterms:references rdf:type )
-                ( dcterms:references atns:referenceType )
-                ( dcterms:references atns:sourceReferenceId )
                 ( dcterms:references schema:author )
-                ( dcterms:references schema:conditionsOfAccess )
-                ( dcterms:references schema:contributor )
                 ( dcterms:references schema:datePublished )
                 ( dcterms:references schema:name )
                 ( dcterms:references schema:url )
-                ( [ sh:inversePath atns:subjectEntity ] rdf:type )
-                ( [ sh:inversePath atns:subjectEntity ] atns:relationshipType )
-                ( [ sh:inversePath atns:subjectEntity ] atns:objectEntity )
-                ( [ sh:inversePath atns:objectEntity ] rdf:type )
-                ( [ sh:inversePath atns:objectEntity ] atns:relationshipType )
-                ( [ sh:inversePath atns:objectEntity ] atns:subjectEntity )
+                ( odrl:obligation rdf:type )
+                ( odrl:obligation dcterms:title )
+                ( odrl:obligation schema:name )
+                ( odrl:obligation schema:description )
+                ( odrl:obligation schema:citation )
+                ( odrl:obligation skos:editorialNote )
+                ( odrl:obligation odrl:action )
+                ( odrl:obligation odrl:action skos:prefLabel )
+                ( odrl:obligation odrl:assigner )
+                ( odrl:obligation odrl:assigner schema:name )
+                ( odrl:obligation odrl:assignee )
+                ( odrl:obligation odrl:assignee schema:name )
+                ( odrl:obligation odrl:target )
+                ( odrl:obligation odrl:target rdf:type )
+                ( odrl:obligation odrl:target schema:name )
+                ( odrl:obligation odrl:target schema:description )
             )
         ]
     ],
@@ -127,6 +108,84 @@ prez:AtnsEntityProfile
         sh:maxCount 0 ;
         sh:path atns:deleted ;
     ] .
+
+prez:OdrlAgreementEmbeddedPropertyShape
+    a sh:PropertyShape ;
+    schema:name "Embedded ODRL Agreement structure"@en ;
+    sh:path [
+        sh:union (
+            shext:allPredicateValues
+            ( odrl:permission rdf:type )
+            ( odrl:permission dcterms:title )
+            ( odrl:permission schema:name )
+            ( odrl:permission schema:description )
+            ( odrl:permission schema:citation )
+            ( odrl:permission odrl:action )
+            ( odrl:permission odrl:assigner )
+            ( odrl:permission odrl:assignee )
+            ( odrl:permission odrl:target )
+            ( odrl:permission odrl:duty )
+            ( odrl:permission odrl:duty rdf:type )
+            ( odrl:permission odrl:duty schema:name )
+            ( odrl:permission odrl:duty schema:description )
+            ( odrl:permission odrl:duty schema:citation )
+            ( odrl:permission odrl:duty skos:editorialNote )
+            ( odrl:permission odrl:duty odrl:action )
+            ( odrl:permission odrl:duty odrl:assigner )
+            ( odrl:permission odrl:duty odrl:assignee )
+            ( odrl:permission odrl:duty odrl:target )
+            ( odrl:prohibition rdf:type )
+            ( odrl:prohibition schema:name )
+            ( odrl:prohibition schema:description )
+            ( odrl:prohibition schema:citation )
+            ( odrl:prohibition odrl:action )
+            ( odrl:prohibition odrl:assigner )
+            ( odrl:prohibition odrl:assignee )
+            ( odrl:prohibition odrl:target )
+            ( odrl:obligation rdf:type )
+            ( odrl:obligation dcterms:title )
+            ( odrl:obligation schema:name )
+            ( odrl:obligation schema:description )
+            ( odrl:obligation schema:citation )
+            ( odrl:obligation skos:editorialNote )
+            ( odrl:obligation odrl:action )
+            ( odrl:obligation odrl:action rdf:type )
+            ( odrl:obligation odrl:action schema:name )
+            ( odrl:obligation odrl:action skos:prefLabel )
+            ( odrl:obligation odrl:action skos:definition )
+            ( odrl:obligation odrl:assigner )
+            ( odrl:obligation odrl:assigner rdf:type )
+            ( odrl:obligation odrl:assigner schema:name )
+            ( odrl:obligation odrl:assigner schema:alternateName )
+            ( odrl:obligation odrl:assigner schema:url )
+            ( odrl:obligation odrl:assigner schema:provider )
+            ( odrl:obligation odrl:assigner schema:hasPart )
+            ( odrl:obligation odrl:assigner schema:hasPart rdf:type )
+            ( odrl:obligation odrl:assigner schema:hasPart schema:name )
+            ( odrl:obligation odrl:assigner schema:hasPart schema:alternateName )
+            ( odrl:obligation odrl:assigner schema:hasPart schema:url )
+            ( odrl:obligation odrl:assignee )
+            ( odrl:obligation odrl:assignee rdf:type )
+            ( odrl:obligation odrl:assignee schema:name )
+            ( odrl:obligation odrl:assignee schema:alternateName )
+            ( odrl:obligation odrl:assignee schema:url )
+            ( odrl:obligation odrl:assignee schema:provider )
+            ( odrl:obligation odrl:assignee schema:hasPart )
+            ( odrl:obligation odrl:assignee schema:hasPart rdf:type )
+            ( odrl:obligation odrl:assignee schema:hasPart schema:name )
+            ( odrl:obligation odrl:assignee schema:hasPart schema:alternateName )
+            ( odrl:obligation odrl:assignee schema:hasPart schema:url )
+            ( odrl:obligation odrl:target )
+            ( odrl:obligation odrl:target rdf:type )
+            ( odrl:obligation odrl:target schema:name )
+            ( odrl:obligation odrl:target schema:description )
+            ( odrl:obligation odrl:target geo:hasGeometry )
+            ( odrl:obligation odrl:target geo:hasGeometry geo:asWKT )
+            ( odrl:obligation odrl:target geo:hasBoundingBox )
+            ( odrl:obligation odrl:target geo:hasBoundingBox geo:asWKT )
+        )
+    ] ;
+.
 
 prez:OdrlAgreementProfile
     a prof:Profile, prez:ObjectProfile, sh:NodeShape ;
@@ -140,26 +199,7 @@ prez:OdrlAgreementProfile
         "application/ld+json",
         "text/anot+turtle",
         "text/turtle" ;
-    sh:property [
-        sh:path [
-            sh:union (
-                shext:allPredicateValues
-                ( odrl:permission rdf:type )
-                ( odrl:permission dcterms:title )
-                ( odrl:permission schema:name )
-                ( odrl:permission schema:description )
-                ( odrl:permission odrl:action )
-                ( odrl:permission odrl:assigner )
-                ( odrl:permission odrl:assignee )
-                ( odrl:permission odrl:target )
-                ( odrl:permission odrl:target rdf:type )
-                ( odrl:permission odrl:target schema:name )
-                ( odrl:permission odrl:target schema:description )
-                ( odrl:permission odrl:target geo:hasGeometry )
-                ( odrl:permission odrl:target geo:hasGeometry geo:asWKT )
-            )
-        ]
-    ] .
+    sh:property prez:OdrlAgreementEmbeddedPropertyShape .
 
 prez:RiCORecordSetProfile
     a prof:Profile, prez:ObjectProfile, sh:NodeShape ;
